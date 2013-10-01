@@ -3,6 +3,12 @@
 #include <D3D10.h>
 #include <D3DX10.h>
 
+struct Vertex{
+	float x;
+	float y;
+	float z;
+};
+
 D3D10Renderer::D3D10Renderer()
 {
 	m_pD3D10Device=NULL;
@@ -178,6 +184,19 @@ bool D3D10Renderer::loadEffectFromMemory(const char* pMem)
 
 bool D3D10Renderer::createBuffer()
 {
+	Vertex verts[] = {
+		{-1.0f,-1.0f,0.0f},
+		{0.0f,1.0f,0.0f},
+		{1.0f,-1.0f,0.0f}
+	};
+
+	D3D10_BUFFER_DESC bd;
+	bd.Usage = D3D10_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof( Vertex ) * 3;
+	bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	bd.MiscFlags = 0;
+
 	return true;
 }
 
