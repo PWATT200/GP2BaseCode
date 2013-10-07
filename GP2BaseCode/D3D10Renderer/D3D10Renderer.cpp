@@ -27,6 +27,9 @@ D3D10Renderer::~D3D10Renderer()
 	if (m_pD3D10Device)
 		m_pD3D10Device->ClearState();
 
+	if (m_pTempBuffer)
+		m_pTempBuffer->Release();
+
 	if (m_pRenderTargetView)
 		m_pRenderTargetView->Release();
 	if (m_pDepthStencelView)
@@ -197,6 +200,16 @@ bool D3D10Renderer::createBuffer()
 	bd.CPUAccessFlags = 0;
 	bd.MiscFlags = 0;
 
+	D3D10_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem = &verts;
+
+	if(FAILED(m_pD3D10Device->CreateBuffer(
+			&bd,
+			&InitData,
+			&m_pTempBuffer )))
+	{
+		OutputDebugStringA("Can't create buffer");
+	}
 	return true;
 }
 
