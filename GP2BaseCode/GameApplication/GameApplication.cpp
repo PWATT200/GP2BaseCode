@@ -128,7 +128,7 @@ void CGameApplication::run()
 void CGameApplication::render()
 {
 	m_pRenderer->clear(1.0f,0.0f,0.0f,1.0f);
-
+	m_pRenderer->renderer();
 	m_pRenderer->present();
 }
 

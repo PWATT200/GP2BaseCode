@@ -22,28 +22,42 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "D3D10Renderer", "D3D10Rende
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Itanium = Debug|Itanium
 		Debug|Win32 = Debug|Win32
+		Release|Itanium = Release|Itanium
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C19D54CE-5430-4FA5-A61F-DB3AE6A65B26}.Debug|Itanium.ActiveCfg = Debug|Win32
+		{C19D54CE-5430-4FA5-A61F-DB3AE6A65B26}.Debug|Itanium.Build.0 = Debug|Win32
 		{C19D54CE-5430-4FA5-A61F-DB3AE6A65B26}.Debug|Win32.ActiveCfg = Debug|Win32
 		{C19D54CE-5430-4FA5-A61F-DB3AE6A65B26}.Debug|Win32.Build.0 = Debug|Win32
+		{C19D54CE-5430-4FA5-A61F-DB3AE6A65B26}.Release|Itanium.ActiveCfg = Release|Itanium
+		{C19D54CE-5430-4FA5-A61F-DB3AE6A65B26}.Release|Itanium.Build.0 = Release|Itanium
 		{C19D54CE-5430-4FA5-A61F-DB3AE6A65B26}.Release|Win32.ActiveCfg = Release|Win32
 		{C19D54CE-5430-4FA5-A61F-DB3AE6A65B26}.Release|Win32.Build.0 = Release|Win32
+		{DB0E915C-43B1-49A3-A126-3551BF087FFE}.Debug|Itanium.ActiveCfg = Debug|Win32
 		{DB0E915C-43B1-49A3-A126-3551BF087FFE}.Debug|Win32.ActiveCfg = Debug|Win32
 		{DB0E915C-43B1-49A3-A126-3551BF087FFE}.Debug|Win32.Build.0 = Debug|Win32
+		{DB0E915C-43B1-49A3-A126-3551BF087FFE}.Release|Itanium.ActiveCfg = Release|Win32
 		{DB0E915C-43B1-49A3-A126-3551BF087FFE}.Release|Win32.ActiveCfg = Release|Win32
 		{DB0E915C-43B1-49A3-A126-3551BF087FFE}.Release|Win32.Build.0 = Release|Win32
+		{08322DFB-3579-46C7-8A52-4FC241ED892F}.Debug|Itanium.ActiveCfg = Debug|Win32
 		{08322DFB-3579-46C7-8A52-4FC241ED892F}.Debug|Win32.ActiveCfg = Debug|Win32
 		{08322DFB-3579-46C7-8A52-4FC241ED892F}.Debug|Win32.Build.0 = Debug|Win32
+		{08322DFB-3579-46C7-8A52-4FC241ED892F}.Release|Itanium.ActiveCfg = Release|Win32
 		{08322DFB-3579-46C7-8A52-4FC241ED892F}.Release|Win32.ActiveCfg = Release|Win32
 		{08322DFB-3579-46C7-8A52-4FC241ED892F}.Release|Win32.Build.0 = Release|Win32
+		{6EA8143A-76A3-4A44-992C-77CE1EAA572D}.Debug|Itanium.ActiveCfg = Debug|Win32
 		{6EA8143A-76A3-4A44-992C-77CE1EAA572D}.Debug|Win32.ActiveCfg = Debug|Win32
 		{6EA8143A-76A3-4A44-992C-77CE1EAA572D}.Debug|Win32.Build.0 = Debug|Win32
+		{6EA8143A-76A3-4A44-992C-77CE1EAA572D}.Release|Itanium.ActiveCfg = Release|Win32
 		{6EA8143A-76A3-4A44-992C-77CE1EAA572D}.Release|Win32.ActiveCfg = Release|Win32
 		{6EA8143A-76A3-4A44-992C-77CE1EAA572D}.Release|Win32.Build.0 = Release|Win32
+		{07BB296C-CC8A-4AB9-9B0C-76E7F61F6C79}.Debug|Itanium.ActiveCfg = Debug|Win32
 		{07BB296C-CC8A-4AB9-9B0C-76E7F61F6C79}.Debug|Win32.ActiveCfg = Debug|Win32
 		{07BB296C-CC8A-4AB9-9B0C-76E7F61F6C79}.Debug|Win32.Build.0 = Debug|Win32
+		{07BB296C-CC8A-4AB9-9B0C-76E7F61F6C79}.Release|Itanium.ActiveCfg = Release|Win32
 		{07BB296C-CC8A-4AB9-9B0C-76E7F61F6C79}.Release|Win32.ActiveCfg = Release|Win32
 		{07BB296C-CC8A-4AB9-9B0C-76E7F61F6C79}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
