@@ -1,7 +1,5 @@
 #include "D3D10Renderer.h"
 
-#include <D3D10.h>
-#include <D3DX10.h>
 
 struct Vertex{
 	float x;
@@ -52,6 +50,10 @@ D3D10Renderer::D3D10Renderer()
 	m_pTempTechnique=NULL;
 	m_pTempBuffer=NULL;
 	m_pTempVertexLayout=NULL;
+	m_View=XMMatrixIdentity();
+	m_Projection=XMMatrixIdentity();
+	m_World=XMMatrixIdentity();
+
 }
 
 D3D10Renderer::~D3D10Renderer()
@@ -93,10 +95,17 @@ bool D3D10Renderer::init(void *pWindowHandle,bool fullScreen)
 		return false;
 	if (!createBuffer())
 		return false;
-	if (!loadEffectFromMemory(basicEffect))
+	if (!loadEffectFromFile("Effects/Transform.fx"))
 		return false;
 	if (!createVertexLayout())
 		return false;
+
+	XMFLOAT3 cameraPos=XMFLOAT3(0.0f,0.0f,-10.0f);
+	XMFLOAT3 focusPos=XMFLOAT3(0.0f,0.0f,0.0f);
+	XMFLOAT3 up=XMFLOAT3(0.0f,1.0f,50.0f);
+
+	createCamera(XMLoadFloat3(&cameraPos),XMLoadFloat3(&focusPos),XMLoadFloat3(&up),XM_PI/4,(float)width/(float)height,0.1f,100.0f);
+	positionObject(2.0f,2.0f,0.0f);
 
 	return true;
 }
@@ -219,7 +228,11 @@ void D3D10Renderer::present()
 
 void D3D10Renderer::renderer()
 {
-	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_pWorldEffectVariable->SetMatrix((float*)&m_World);
+	m_pProjectionEffectVariable->SetMatrix((float*)&m_Projection);
+	m_pViewEffectVariable->SetMatrix((float*)&m_View);
+	
+	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	m_pD3D10Device->IASetInputLayout(m_pTempVertexLayout);
 
 	UINT stride = sizeof( Vertex);
@@ -239,8 +252,41 @@ void D3D10Renderer::renderer()
 	{
 		ID3D10EffectPass *pCurrentPass=m_pTempTechnique->GetPassByIndex(i);
 		pCurrentPass->Apply(0);
-		m_pD3D10Device->Draw(3,0);
+		m_pD3D10Device->Draw(4,0);
 	}
+}
+
+bool D3D10Renderer::loadEffectFromFile(char* pFileName)
+{
+	DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
+#if defined( DEBUG ) || defined( _DEBUG )
+	dwShaderFlags |= D3D10_SHADER_DEBUG;
+#endif
+
+	ID3D10Blob * pErrorBuffer = NULL;
+	if (FAILED(D3DX10CreateEffectFromFileA(pFileName,
+				NULL,
+				NULL,
+				"fx_4_0",
+				dwShaderFlags,
+				0,
+				m_pD3D10Device,
+				NULL,
+				NULL,
+				&m_pTempEffect,
+				&pErrorBuffer,
+				NULL )))
+	{
+			OutputDebugStringA((char*)pErrorBuffer->GetBufferPointer());
+			return false;
+	}
+
+	m_pWorldEffectVariable=m_pTempEffect->GetVariableByName("matWorld")->AsMatrix();
+	m_pProjectionEffectVariable=m_pTempEffect->GetVariableByName("matProjection")->AsMatrix();
+	m_pViewEffectVariable=m_pTempEffect->GetVariableByName("matView")->AsMatrix();
+
+	m_pTempTechnique=m_pTempEffect->GetTechniqueByName("Render");
+	return true;
 }
 
 bool D3D10Renderer::loadEffectFromMemory(const char* pMem)
@@ -277,13 +323,14 @@ bool D3D10Renderer::createBuffer()
 {
 	Vertex verts[] = {
 		{-1.0f,-1.0f,0.0f},
-		{0.0f,1.0f,0.0f},
-		{1.0f,-1.0f,0.0f}
+		{-1.0f,1.0f,0.0f},
+		{1.0f,-1.0f,0.0f},
+		{1.0f,1.0f,0.0f}
 	};
 
 	D3D10_BUFFER_DESC bd;
 	bd.Usage = D3D10_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof( Vertex ) * 3;
+	bd.ByteWidth = sizeof( Vertex ) * 4;
 	bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	bd.MiscFlags = 0;
@@ -316,4 +363,15 @@ bool D3D10Renderer::createVertexLayout()
 		OutputDebugStringA("Can't create layout");
 	}
 	return true;
+}
+
+void D3D10Renderer::createCamera(XMVECTOR &position, XMVECTOR &focus, XMVECTOR &up, float fov, float aspectRatio, float nearClip, float farClip)
+{
+	m_View=XMMatrixLookAtLH(position,focus,up);
+	m_Projection=XMMatrixPerspectiveFovLH(fov,aspectRatio,nearClip,farClip);
+}
+
+void D3D10Renderer::positionObject(float x, float y, float z)
+{
+	m_World=XMMatrixTranslation(x,y,z);
 }

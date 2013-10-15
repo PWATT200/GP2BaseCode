@@ -5,15 +5,12 @@
 #include <Windows.h>
 
 //forward declarations of the D3D10 interfaces
-struct ID3D10Device;
-struct IDXGISwapChain;
-struct ID3D10RenderTargetView;
-struct ID3D10DepthStencilView;
-struct ID3D10Texture2D;
-struct ID3D10Effect;
-struct ID3D10Buffer;
-struct ID3D10InputLayout;
-struct ID3D10EffectTechnique;
+#include <D3D10.h>
+#include <D3DX10.h>
+
+#define _XM_NO_INTRINSICS_
+#include <xnamath.h>
+
 //D3D10Renderer implements the Renderer interface
 class D3D10Renderer:public IRenderer
 {
@@ -26,11 +23,14 @@ public:
 	void clear(float r,float g,float b,float a);
 	void present();
 	void renderer();
+	void createCamera(XMVECTOR &position, XMVECTOR &focus, XMVECTOR &up, float fov, float aspectRatio, float nearClip, float farClip);
+	void positionObject(float x, float y, float z);
 private:
 	bool createDevice(HWND pWindowHandle,int windowWidth, int windowHeight,
 bool fullScreen);
 	bool createInitialRenderTarget(int windowWidth, int windowHeight);
 	bool loadEffectFromMemory(const char* pMem);
+	bool loadEffectFromFile(char* pFileName);
 	bool createBuffer();
 	bool createVertexLayout();
 private:
@@ -44,4 +44,10 @@ private:
 	ID3D10EffectTechnique * m_pTempTechnique;
 	ID3D10Buffer * m_pTempBuffer;
 	ID3D10InputLayout * m_pTempVertexLayout;
+	XMMATRIX m_View;
+	XMMATRIX m_Projection;
+	XMMATRIX m_World;
+	ID3D10EffectMatrixVariable * m_pWorldEffectVariable;
+	ID3D10EffectMatrixVariable * m_pProjectionEffectVariable;
+	ID3D10EffectMatrixVariable * m_pViewEffectVariable;
 };
