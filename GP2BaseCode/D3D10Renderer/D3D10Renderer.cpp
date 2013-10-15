@@ -91,6 +91,12 @@ bool D3D10Renderer::init(void *pWindowHandle,bool fullScreen)
 		return false;
 	if (!createInitialRenderTarget(width,height))
 		return false;
+	if (!createBuffer())
+		return false;
+	if (!loadEffectFromMemory(basicEffect))
+		return false;
+	if (!createVertexLayout())
+		return false;
 
 	return true;
 }
