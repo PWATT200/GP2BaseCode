@@ -43,12 +43,22 @@ private:
 	ID3D10Effect * m_pTempEffect;
 	ID3D10EffectTechnique * m_pTempTechnique;
 	ID3D10Buffer * m_pTempBuffer;
+	ID3D10Buffer * m_pTempIndexBuffer;
 	ID3D10InputLayout * m_pTempVertexLayout;
+
 	XMMATRIX m_View;
 	XMMATRIX m_Projection;
 	XMMATRIX m_World;
+
 	ID3D10EffectMatrixVariable * m_pWorldEffectVariable;
 	ID3D10EffectMatrixVariable * m_pProjectionEffectVariable;
 	ID3D10EffectMatrixVariable * m_pViewEffectVariable;
-	ID3D10Buffer * m_pTempIndexBuffer;
+
+	XMFLOAT4 m_AmbientColour;
+	XMFLOAT4 m_AmbientLightColour;
+
+	ID3D10EffectVectorVariable * m_pAmbientMatColourVariable;
+	ID3D10EffectVectorVariable * m_pAmbientLightColourVariable;
+
+	
 };

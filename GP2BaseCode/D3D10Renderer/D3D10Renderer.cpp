@@ -5,6 +5,10 @@ struct Vertex{
 	float x;
 	float y;
 	float z;
+
+	float nu;
+	float nv;
+	float nw;
 };
 
 const D3D10_INPUT_ELEMENT_DESC VerexLayout[] = 
@@ -15,7 +19,15 @@ const D3D10_INPUT_ELEMENT_DESC VerexLayout[] =
 		0,
 		0,
 		D3D10_INPUT_PER_VERTEX_DATA,
-		0 },		
+		0 },
+
+	{	"NORMAL",
+		0,
+		DXGI_FORMAT_R32G32B32_FLOAT,
+		0,
+		12,
+		D3D10_INPUT_PER_VERTEX_DATA,
+		0 },
 };
 
 
@@ -99,7 +111,7 @@ bool D3D10Renderer::init(void *pWindowHandle,bool fullScreen)
 		return false;
 	if (!createBuffer())
 		return false;
-	if (!loadEffectFromFile("Effects/Transform.fx"))
+	if (!loadEffectFromFile("Effects/Ambient.fx"))
 		return false;
 	if (!createVertexLayout())
 		return false;
@@ -108,8 +120,10 @@ bool D3D10Renderer::init(void *pWindowHandle,bool fullScreen)
 	XMFLOAT3 focusPos=XMFLOAT3(0.0f,0.0f,0.0f);
 	XMFLOAT3 up=XMFLOAT3(0.0f,1.0f,0.0f);
 
+	
+
 	createCamera(XMLoadFloat3(&cameraPos),XMLoadFloat3(&focusPos),XMLoadFloat3(&up),XM_PI/4,(float)width/(float)height,0.1f,100.0f);
-	positionObject(0.0f,0.0f,0.0f);
+	positionObject(5.0f,-4.0f,5.0f);
 
 	return true;
 }
@@ -235,6 +249,9 @@ void D3D10Renderer::renderer()
 	m_pWorldEffectVariable->SetMatrix((float*)&m_World);
 	m_pProjectionEffectVariable->SetMatrix((float*)&m_Projection);
 	m_pViewEffectVariable->SetMatrix((float*)&m_View);
+
+	m_pAmbientMatColourVariable->SetFloatVector((float*)&m_AmbientColour);
+	m_pAmbientLightColourVariable->SetFloatVector((float*)&m_AmbientLightColour);
 	
 	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	m_pD3D10Device->IASetInputLayout(m_pTempVertexLayout);
@@ -292,6 +309,9 @@ bool D3D10Renderer::loadEffectFromFile(char* pFileName)
 	m_pProjectionEffectVariable=m_pTempEffect->GetVariableByName("matProjection")->AsMatrix();
 	m_pViewEffectVariable=m_pTempEffect->GetVariableByName("matView")->AsMatrix();
 
+	m_pAmbientMatColourVariable=m_pTempEffect->GetVariableByName("ambientMaterial")->AsVector();
+	m_pAmbientLightColourVariable=m_pTempEffect->GetVariableByName("ambientLightColor")->AsVector();
+
 	m_pTempTechnique=m_pTempEffect->GetTechniqueByName("Render");
 	return true;
 }
@@ -329,14 +349,14 @@ bool D3D10Renderer::loadEffectFromMemory(const char* pMem)
 bool D3D10Renderer::createBuffer()
 {
 	Vertex verts[] = {
-		{-1.0f,-1.0f,1.0f},
-		{-1.0f,1.0f,1.0f},
-		{1.0f,-1.0f,1.0f},
-		{1.0f,1.0f,1.0f},
-		{-1.0f,-1.0f,-1.0f},
-		{-1.0f,1.0f,-1.0f},
-		{1.0f,-1.0f,-1.0f},
-		{1.0f,1.0f,-1.0f}
+		{-1.0f,-1.0f,1.0f,0.0f,0.5f,0.5f},
+		{-1.0f,1.0f,1.0f,0.0f,0.5f,0.5f},
+		{1.0f,-1.0f,1.0f,0.0f,-0.5f,0.5f},
+		{1.0f,1.0f,1.0f,0.0f,-0.5f,0.5f},
+		{-1.0f,-1.0f,-1.0f,0.0f,0.5f,-0.5f},
+		{-1.0f,1.0f,-1.0f,0.0f,0.5f,-0.5f},
+		{1.0f,-1.0f,-1.0f,0.0f,-0.5f,-0.5f},
+		{1.0f,1.0f,-1.0f,0.0f,-0.5f,-0.5f}
 	};
 
 	D3D10_BUFFER_DESC bd;
