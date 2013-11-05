@@ -20,6 +20,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Renderer", "Renderer\Render
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "D3D10Renderer", "D3D10Renderer\D3D10Renderer.vcxproj", "{07BB296C-CC8A-4AB9-9B0C-76E7F61F6C79}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Textures", "Textures", "{45CF4880-82E4-457C-AAE8-C9DC7A789059}"
+	ProjectSection(SolutionItems) = preProject
+		D:\Shaders\Texturing\Texturing.fx = D:\Shaders\Texturing\Texturing.fx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Itanium = Debug|Itanium

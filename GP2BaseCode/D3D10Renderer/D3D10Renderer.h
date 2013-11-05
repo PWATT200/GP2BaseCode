@@ -50,4 +50,5 @@ private:
 	ID3D10EffectMatrixVariable * m_pWorldEffectVariable;
 	ID3D10EffectMatrixVariable * m_pProjectionEffectVariable;
 	ID3D10EffectMatrixVariable * m_pViewEffectVariable;
+	ID3D10Buffer * m_pTempIndexBuffer;
 };

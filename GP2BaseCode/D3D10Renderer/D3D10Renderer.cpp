@@ -50,6 +50,7 @@ D3D10Renderer::D3D10Renderer()
 	m_pTempTechnique=NULL;
 	m_pTempBuffer=NULL;
 	m_pTempVertexLayout=NULL;
+	m_pTempIndexBuffer=NULL;
 	m_View=XMMatrixIdentity();
 	m_Projection=XMMatrixIdentity();
 	m_World=XMMatrixIdentity();
@@ -67,6 +68,9 @@ D3D10Renderer::~D3D10Renderer()
 		m_pTempEffect->Release();
 	if	(m_pTempVertexLayout)
 		m_pTempVertexLayout->Release();
+
+	if (m_pTempIndexBuffer)
+		m_pTempIndexBuffer->Release();
 
 	if (m_pRenderTargetView)
 		m_pRenderTargetView->Release();
@@ -102,10 +106,10 @@ bool D3D10Renderer::init(void *pWindowHandle,bool fullScreen)
 
 	XMFLOAT3 cameraPos=XMFLOAT3(0.0f,0.0f,-10.0f);
 	XMFLOAT3 focusPos=XMFLOAT3(0.0f,0.0f,0.0f);
-	XMFLOAT3 up=XMFLOAT3(0.0f,1.0f,50.0f);
+	XMFLOAT3 up=XMFLOAT3(0.0f,1.0f,0.0f);
 
 	createCamera(XMLoadFloat3(&cameraPos),XMLoadFloat3(&focusPos),XMLoadFloat3(&up),XM_PI/4,(float)width/(float)height,0.1f,100.0f);
-	positionObject(2.0f,2.0f,0.0f);
+	positionObject(0.0f,0.0f,0.0f);
 
 	return true;
 }
@@ -234,7 +238,7 @@ void D3D10Renderer::renderer()
 	
 	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	m_pD3D10Device->IASetInputLayout(m_pTempVertexLayout);
-
+	
 	UINT stride = sizeof( Vertex);
 	UINT offset = 0;
 	
@@ -245,6 +249,9 @@ void D3D10Renderer::renderer()
 			&stride,
 			&offset );
 
+	m_pD3D10Device->IASetIndexBuffer(m_pTempIndexBuffer,DXGI_FORMAT_R32_UINT,0);
+
+
 	D3D10_TECHNIQUE_DESC techniqueDesc;
 	m_pTempTechnique->GetDesc(&techniqueDesc);
 
@@ -252,7 +259,7 @@ void D3D10Renderer::renderer()
 	{
 		ID3D10EffectPass *pCurrentPass=m_pTempTechnique->GetPassByIndex(i);
 		pCurrentPass->Apply(0);
-		m_pD3D10Device->Draw(4,0);
+		m_pD3D10Device->DrawIndexed(36,0,0);
 	}
 }
 
@@ -322,15 +329,19 @@ bool D3D10Renderer::loadEffectFromMemory(const char* pMem)
 bool D3D10Renderer::createBuffer()
 {
 	Vertex verts[] = {
-		{-1.0f,-1.0f,0.0f},
-		{-1.0f,1.0f,0.0f},
-		{1.0f,-1.0f,0.0f},
-		{1.0f,1.0f,0.0f}
+		{-1.0f,-1.0f,1.0f},
+		{-1.0f,1.0f,1.0f},
+		{1.0f,-1.0f,1.0f},
+		{1.0f,1.0f,1.0f},
+		{-1.0f,-1.0f,-1.0f},
+		{-1.0f,1.0f,-1.0f},
+		{1.0f,-1.0f,-1.0f},
+		{1.0f,1.0f,-1.0f}
 	};
 
 	D3D10_BUFFER_DESC bd;
 	bd.Usage = D3D10_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof( Vertex ) * 4;
+	bd.ByteWidth = sizeof( Vertex ) * 8;
 	bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	bd.MiscFlags = 0;
@@ -345,6 +356,44 @@ bool D3D10Renderer::createBuffer()
 	{
 		OutputDebugStringA("Can't create buffer");
 	}
+
+	int indices[36] =	{//front
+						 0,1,2,
+						 1,3,2,
+						 //right
+						 2,3,4,
+						 3,4,5,
+						 //back
+						 4,5,6,
+						 5,6,7,
+						 //left
+						 6,7,0,
+						 7,0,1,
+						 //top
+						 1,7,3,
+						 7,3,5,
+						 //bottom
+						 0,2,4,
+						 0,4,6};
+
+	D3D10_BUFFER_DESC indexBD;
+	indexBD.Usage = D3D10_USAGE_DEFAULT;
+	indexBD.ByteWidth = sizeof(int) * 36;
+	indexBD.BindFlags = D3D10_BIND_INDEX_BUFFER;
+	indexBD.CPUAccessFlags = 0;
+	indexBD.MiscFlags = 0;
+
+	D3D10_SUBRESOURCE_DATA InitIBData;
+	InitIBData.pSysMem = &indices;
+
+	if(FAILED(m_pD3D10Device->CreateBuffer(
+			&indexBD,
+			&InitIBData,
+			&m_pTempIndexBuffer	)))
+	{
+		OutputDebugStringA("Can't create buffer");
+	}
+
 	return true;
 }
 
